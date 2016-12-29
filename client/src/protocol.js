@@ -1,6 +1,11 @@
-const KEYPRESS = "CONTROL:KEYPRESS"
-
 export const keypress = keyCode => ({
-  type: KEYPRESS,
-  keyCode
+  "KeyPress": {
+    keyCode
+  }
+})
+
+export const identify = username => ({
+  "Identify": {
+    username
+  }
 })

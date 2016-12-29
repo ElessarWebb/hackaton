@@ -1,7 +1,10 @@
 import JSON from 'json3'
+import _ from 'lodash'
 
 const SEND = "CONTROL/SEND"
 const RECEIVE = "CONTROL/RECEIVE"
+const SUBSCRIBE = "CONTROL/SUBSCRIBE"
+const UNSUBSCRIBE = "CONTROL/UNSUBSCRIBE"
 const SOCKET_CREATE = "CONTROL/SOCKET_CREATE"
 const SOCKET_OPEN = "CONTROL/SOCKET_OPEN"
 const SOCKET_CLOSE = "CONTROL/SOCKET_CLOSE"
@@ -14,6 +17,16 @@ const socketOpen = socket => ({
 const receive = msg => ({
   type: RECEIVE,
   msg
+})
+
+const subscribe = handler => ({
+  type: SUBSCRIBE,
+  handler
+})
+
+const unsubscribe = handler => ({
+  type: UNSUBSCRIBE,
+  handler
 })
 
 const createSocket = (host, port, path) => dispatch => {
@@ -34,7 +47,8 @@ const send = msg => ({
 export const actions = {
   createSocket,
   send,
-  receive
+  subscribe,
+  unsubscribe
 }
 
 const actionHandlers = {
@@ -52,12 +66,26 @@ const actionHandlers = {
   [RECEIVE]: (state, {msg}) => {
     console.log("Received: " + msg)
 
+    let parsed = JSON.parse(msg)
+    _.each(state.handlers, h => h(parsed))
+
     return state
-  }
+  },
+
+  [SUBSCRIBE]: (state, {handler}) => ({
+    ...state,
+    handlers: [...state.handlers, handler]
+  }),
+
+  [UNSUBSCRIBE]: (state, {hander}) => ({
+    ...state,
+    handlers: _.filter(state.handlers, h => h !== handler)
+  })
 }
 
 const initial = {
-  controlSocket: null
+  controlSocket: null,
+  handlers: []
 }
 
 export default (state = initial, action) => {
