@@ -15,7 +15,8 @@ class CoreLayout extends React.Component {
   }
 
   componentWillMount() {
-    this.props.createSocket("localhost", 8080, 'commands')
+    // this.props.createSocket("localhost", 8080, 'commands')
+    this.props.createSocket("192.168.2.18", 8080, 'commands')
   }
 
   componentWillUnmount() {
