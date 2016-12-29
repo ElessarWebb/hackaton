@@ -5,30 +5,33 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.ws.{ BinaryMessage, Message, TextMessage, UpgradeToWebSocket }
 import akka.http.scaladsl.model.{ HttpMethods, HttpRequest, HttpResponse, Uri }
-import akka.stream.scaladsl.{ Flow, Sink }
-import akka.stream.{ ActorMaterializer, Materializer }
+import akka.stream._
+import akka.stream.scaladsl._
+import io.airbender.protocol._
+import io.circe.generic.auto._
+import io.circe.parser.decode
 
 import scala.io.StdIn
 
 object CommandSocketService extends App {
-  def commandWebSocketService(implicit m: Materializer): Flow[Message, BinaryMessage, NotUsed] =
+
+  def commandWebSocketService[T](implicit m: Materializer): Flow[Message, Message, NotUsed] =
     Flow[Message]
       .mapConcat {
         // we match but don't actually consume the text message here,
         // rather we simply stream it back as the tail of the response
         // this means we might start sending the response even before the
         // end of the incoming message has been received
-        case bm: BinaryMessage =>
-          println("MSG!", bm)
-          List(bm)
         case tm: TextMessage =>
-          println("Text:", tm)
+          tm.textStream map decode[ControlMessage] runForeach println
+          Nil
+        case bm: BinaryMessage =>
           // ignore binary messages but drain content to avoid the stream being clogged
-          tm.textStream.runWith(Sink.ignore)
+          bm.dataStream.runWith(Sink.ignore)
           Nil
       }
 
-  def requestHandler(path: String, service: Flow[Message, BinaryMessage, NotUsed])(implicit m: Materializer): HttpRequest => HttpResponse = {
+  def requestHandler(path: String, service: Flow[Message, Message, NotUsed])(implicit m: Materializer): HttpRequest => HttpResponse = {
     case req @ HttpRequest(HttpMethods.GET, Uri.Path(requestPath), _, _, _) if requestPath == path =>
       req.header[UpgradeToWebSocket] match {
         case Some(upgrade) => upgrade.handleMessages(service)

@@ -10,5 +10,7 @@ val akkaHttpV = "10.0.1"
 libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor" % akkaV,
   "com.typesafe.akka" %% "akka-http-core" % akkaHttpV,
-  "com.sksamuel.avro4s" %% "avro4s-core" % "1.6.3"
+
+  "io.circe" %% "circe-generic" % "0.6.1",
+  "io.circe" %% "circe-parser" % "0.6.1"
 )
