@@ -1,5 +1,6 @@
 import React, {PropTypes} from 'react'
 import cn from 'classnames'
+import * as protocol from 'protocol'
 
 import classes from './Controller.scss'
 
@@ -14,7 +15,7 @@ class Key extends React.Component {
   static propTypes = {
     children: PropTypes.node,
     className: PropTypes.string,
-    sendKey: PropTypes.func.isRequired,
+    send: PropTypes.func.isRequired,
     keyCode: PropTypes.string.isRequired
   }
 
@@ -27,8 +28,8 @@ class Key extends React.Component {
     super(props)
 
     this.onClick = () => {
-      let {sendKey, keyCode} = this.props
-      sendKey(keyCode)
+      let {send, keyCode} = this.props
+      send(protocol.keypress(keyCode))
     }
   }
 
@@ -44,37 +45,37 @@ class Key extends React.Component {
   }
 }
 
-const Arrows = ({sendKey}) => (
+const Arrows = ({send}) => (
   <div className={classes.Arrows}>
-    <Key className={classes.ArrowLeft} sendKey={sendKey} keyCode="arrow:left"><Icon>chevron-left</Icon></Key>
-    <Key className={classes.ArrowRight} sendKey={sendKey} keyCode="arrow:right"><Icon>chevron-right</Icon></Key>
-    <Key className={classes.ArrowUp} sendKey={sendKey} keyCode="arrow:up"><Icon>chevron-up</Icon></Key>
-    <Key className={classes.ArrowDown} sendKey={sendKey} keyCode="arrow:up"><Icon>chevron-down</Icon></Key>
+    <Key className={classes.ArrowLeft} send={send} keyCode="arrow:left"><Icon>chevron-left</Icon></Key>
+    <Key className={classes.ArrowRight} send={send} keyCode="arrow:right"><Icon>chevron-right</Icon></Key>
+    <Key className={classes.ArrowUp} send={send} keyCode="arrow:up"><Icon>chevron-up</Icon></Key>
+    <Key className={classes.ArrowDown} send={send} keyCode="arrow:up"><Icon>chevron-down</Icon></Key>
   </div>
 )
 
-Arrows.propTypes = { sendKey: PropTypes.func.isRequired }
+Arrows.propTypes = { send: PropTypes.func.isRequired }
 
-const ABKeys = ({sendKey}) => (
+const ABKeys = ({send}) => (
   <div className={classes.ABKeys}>
-    <Key className={classes.AKey} sendKey={sendKey} keyCode="snes:a">A</Key>
-    <Key className={classes.BKey} sendKey={sendKey} keyCode="snes:b">B</Key>
+    <Key className={classes.AKey} send={send} keyCode="snes:a">A</Key>
+    <Key className={classes.BKey} send={send} keyCode="snes:b">B</Key>
   </div>
 )
-ABKeys.propTypes = { sendKey: PropTypes.func.isRequired }
+ABKeys.propTypes = { send: PropTypes.func.isRequired }
 
 export class Controller extends React.Component {
   static propTypes = {
-    sendKey: PropTypes.func.isRequired
+    send: PropTypes.func.isRequired
   }
 
   render () {
-    let {sendKey} = this.props
+    let {send} = this.props
 
     return (
       <div className={classes.Controller}>
-        <Arrows sendKey={sendKey} />
-        <ABKeys sendKey={sendKey} />
+        <Arrows send={send} />
+        <ABKeys send={send} />
       </div>
     )
   }

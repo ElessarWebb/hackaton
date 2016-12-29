@@ -1,47 +1,25 @@
 import React, {PropTypes} from 'react'
+import _ from 'lodash'
+import {connect} from 'react-redux'
 
 import Controller from 'components/Controller'
+
+import * as control from 'redux/modules/control'
 
 export class ControllerView extends React.Component {
 
   static propTypes = {
-    host: PropTypes.string,
-    port: PropTypes.number,
-  }
-
-  static defaultProps = {
-    host: '192.168.2.18',
-    port: 8080
-  }
-
-  constructor(props) {
-    super(props)
-
-    this.socket = null
-    this.sendKey = this.sendKey.bind(this)
-  }
-
-  componentWillMount() {
-    let {host, port} = this.props
-    this.socket = new WebSocket(`ws://${host}:${port}/commands`)
-    this.socket.onopen = () => console.log("Connected to server")
-    this.socket.onmessage = (msg) => console.log("Received: " + msg)
-    this.socket.onclose = () => console.log("Connected to server")
-  }
-
-  componentWillUnmount() {
-  }
-
-  sendKey(keyCode) {
-    console.log("Sending: " + keyCode)
-    this.socket.send(keyCode)
+    send: PropTypes.func.isRequired
   }
 
   render () {
+    let {send} = this.props
     return (
-      <Controller sendKey={this.sendKey} />
+      <Controller send={send} />
     )
   }
 }
 
-export default ControllerView
+export default connect(_.constant({}), {
+  send: control.actions.send
+})(ControllerView)
