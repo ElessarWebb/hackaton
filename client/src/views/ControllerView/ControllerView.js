@@ -1,49 +1,47 @@
 import React, {PropTypes} from 'react'
-import cn from 'classnames'
 
-import classes from './ControllerView.scss'
+import Controller from 'components/Controller'
 
-class ArrowKey extends React.Component {
+export class ControllerView extends React.Component {
 
   static propTypes = {
-    icon: PropTypes.string,
-    className: PropTypes.string,
+    host: PropTypes.string,
+    port: PropTypes.number,
   }
 
   static defaultProps = {
-    icon: "",
-    className: ""
+    host: '192.168.2.18',
+    port: 8080
   }
 
-  render() {
-    let {icon, className} = this.props
+  constructor(props) {
+    super(props)
 
-    return (
-      <button type="button" className={cn(classes.ArrowKey, className)}>
-        <i className={`fa fa-${icon} fa-2x`} />
-      </button>
-    )
+    this.socket = null
+    this.sendKey = this.sendKey.bind(this)
   }
-}
 
-const Arrows = (props) => (
-  <div className={classes.Arrows}>
-    <ArrowKey className={classes.ArrowLeft} icon="chevron-left" />
-    <ArrowKey className={classes.ArrowRight} icon="chevron-right" />
-    <ArrowKey className={classes.ArrowUp} icon="chevron-up" />
-    <ArrowKey className={classes.ArrowDown} icon="chevron-down" />
-  </div>
-)
-export class Controller extends React.Component {
-  static propTypes = {}
+  componentWillMount() {
+    let {host, port} = this.props
+    this.socket = new WebSocket(`ws://${host}:${port}/commands`)
+    this.socket.onopen = () => console.log("Connected to server")
+    this.socket.onmessage = (msg) => console.log("Received: " + msg)
+    this.socket.onclose = () => console.log("Connected to server")
+  }
+
+  componentWillUnmount() {
+  }
+
+  sendKey(keyCode) {
+    console.log("Sending: " + keyCode)
+    this.socket.send(keyCode)
+  }
 
   render () {
     return (
-      <div className={classes.ControllerView}>
-        <Arrows />
-      </div>
+      <Controller sendKey={this.sendKey} />
     )
   }
 }
 
-export default Controller
+export default ControllerView

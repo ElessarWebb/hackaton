@@ -4,9 +4,7 @@
     "standard",
     "standard-react"
   ],
-  "plugins" : [
-    "flow-vars"
-  ],
+  "plugins" : [],
   "env"     : {
     "browser" : true
   },
@@ -16,12 +14,24 @@
     "__PROD__"     : false,
     "__DEBUG__"    : false,
     "__DEBUG_NEW_WINDOW__" : false,
-    "__BASENAME__" : false
+    "__BASENAME__" : false,
+    "__API_URL__"  : true,
+    "__API_DATETIME_FORMAT__" : true,
   },
   "rules": {
     "semi" : [2, "never"],
     "max-len": [2, 120, 2],
-    "flow-vars/define-flow-type": 1,
-    "flow-vars/use-flow-type": 1
+    "quotes": 0,
+    "space-before-function-paren": 0,
+    "jsx-quotes": 0,
+    "space-infix-ops": 0,
+    "comma-dangle": 0,
+    "react/jsx-no-bind": 0,
+    "no-unused-vars": [
+      2, {
+        "vars": "all",
+        "args": "none",
+        "varsIgnorePattern": "^React|PropTypes|Component$"
+      }]
   }
 }
