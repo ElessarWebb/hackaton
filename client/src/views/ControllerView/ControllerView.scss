@@ -1,0 +1,43 @@
+.ControllerView {
+  
+}
+
+$dim: 50px;
+$padding: 20px;
+$totalDim: 4 * $dim + 4 * $padding;
+$halfway: $totalDim / 2 - $dim / 2;
+.Arrows {
+  position: relative;
+  width: $totalDim;
+  height: $totalDim;
+
+  .ArrowUp {
+    position: absolute;
+    left: $halfway;
+    top: $padding;
+  }
+  .ArrowRight {
+    position: absolute;
+    right: $padding;
+    top: $halfway;
+  }
+  .ArrowDown {
+    position: absolute;
+    left: $halfway;
+    bottom: $padding;
+  }
+  .ArrowLeft {
+    position: absolute;
+    left: $padding;
+    top: $halfway;
+  }
+}
+
+.ArrowKey {
+  width: $dim;
+  height: $dim;
+
+  background-color: #555;
+  color: white;
+  border: 1px solid black;
+}
