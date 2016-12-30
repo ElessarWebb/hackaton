@@ -1,20 +1,25 @@
 package io.airbender
 
-import java.util.UUID
+import io.circe._
+import io.circe.syntax._
+import io.circe.generic._
+
+import io.airbender.model._
+import io.airbender.applications._
+
+package protocol {
+  @JsonCodec case class Bar(i: Int, s: String)
+  sealed trait ClientMessage
+  case class KeyPress(keyCode: KeyCode) extends ClientMessage
+  case class Identify(username: String) extends ClientMessage
+
+  case class ControlMessage(playerId: String, msg: ClientMessage)
+
+  sealed trait ControlResponse
+  case class Identified(playerId: PlayerID) extends ControlResponse
+  case class ClientError(message: String) extends ControlResponse
+}
 
 package object protocol {
   type KeyCode = String
-  type PlayerId = String
-
-  case class Player(id: UUID, nickname: String)
-
-  sealed trait ControlMessage
-  case class KeyPress(keyCode: KeyCode) extends ControlMessage
-  case class Identify(username: String) extends ControlMessage
-
-  object ControlMessage
-
-  sealed trait ControlResponse
-  case class Identified(playerId: PlayerId) extends ControlResponse
-  case class ControlFailure(message: String) extends ControlResponse
 }
